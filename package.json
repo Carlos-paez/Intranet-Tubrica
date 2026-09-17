@@ -1,0 +1,18 @@
+{
+  "name": "intranet-tubrica",
+  "private": true,
+  "version": "4.1.0",
+  "type": "module",
+  "description": "Portal de acceso único de la Intranet Tubrica.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^7.0.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
+  }
+}

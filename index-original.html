@@ -1,0 +1,2091 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Intranet Tubrica</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='13' fill='none' stroke='%230d2b6b' stroke-width='4'/><circle cx='16' cy='16' r='5.5' fill='none' stroke='%230d2b6b' stroke-width='4'/></svg>"
+    />
+
+    <!-- jQuery: debe cargar primero (Materialize depende de él) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- Bootstrap 5 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Materialize -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Tipografías -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Iconos -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --navy: #0d2b6b;
+        --navy-2: #0a2158;
+        --navy-3: #16409c;
+        --blue: #1d5fd0;
+        --bg: #f4f7fc;
+        --card: #ffffff;
+        --line: #e5eaf5;
+        --line2: #d3dcef;
+        --ink: #12234d;
+        --mut: #5c6b8a;
+        --dim: #8b97b3;
+        --ok: #15803d;
+        --okbg: #e8f7ee;
+        --warn: #b45309;
+        --warnbg: #fdf3e3;
+        --mono: "JetBrains Mono", monospace;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Plus Jakarta Sans", sans-serif;
+        overflow-x: hidden;
+        font-size: 15px;
+      }
+      .mono {
+        font-family: var(--mono);
+      }
+      ::selection {
+        background: var(--navy);
+        color: #fff;
+      }
+      :focus-visible {
+        outline: 2px solid var(--blue);
+        outline-offset: 2px;
+      }
+      mark {
+        background: rgba(29, 95, 208, 0.14);
+        color: var(--navy-3);
+        font-weight: 700;
+        padding: 0 3px;
+        border-radius: 4px;
+      }
+      a {
+        color: inherit;
+      }
+
+      .msym {
+        font-family: "Material Symbols Outlined";
+        font-weight: normal;
+        font-style: normal;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        direction: ltr;
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+        -webkit-font-smoothing: antialiased;
+        user-select: none;
+      }
+
+      .wrap {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 clamp(16px, 4vw, 48px);
+      }
+
+      /* ══════════ BOTONES PASTILLA ══════════ */
+      .pill {
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 13.5px;
+        padding: 11px 22px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 0;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: inherit;
+        text-decoration: none;
+        line-height: 1;
+      }
+      .pill .msym {
+        font-size: 17px;
+      }
+      .pill.solid {
+        background: var(--navy);
+        color: #fff;
+      }
+      .pill.solid:hover {
+        background: var(--navy-3);
+        transform: translateY(-1px);
+        box-shadow: 0 8px 18px rgba(13, 43, 107, 0.3);
+      }
+      .pill.ghost {
+        background: #fff;
+        border: 1.5px solid var(--line2);
+        color: var(--mut);
+      }
+      .pill.ghost:hover {
+        border-color: var(--navy);
+        color: var(--navy);
+      }
+      .pill.white {
+        background: #fff;
+        color: var(--navy);
+      }
+      .pill.white:hover {
+        background: #e8effc;
+        transform: translateY(-1px);
+      }
+      .pill.glass {
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
+        border: 1.5px solid rgba(255, 255, 255, 0.3);
+      }
+      .pill.glass:hover {
+        background: rgba(255, 255, 255, 0.28);
+      }
+
+      /* ══════════ CABECERA: azul marino SIEMPRE sólido, sin transparencias ══════════ */
+      .tb-nav {
+        position: sticky;
+        top: 0;
+        z-index: 90;
+        background: var(--navy);
+        box-shadow: 0 2px 18px rgba(8, 20, 50, 0.3);
+      }
+      .nav-in {
+        height: 70px;
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        position: relative;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        flex: none;
+      }
+      .brand-name {
+        font-size: 26px;
+        font-weight: 800;
+        letter-spacing: 0.03em;
+        color: #fff;
+        line-height: 1;
+      }
+      .brand-sub {
+        display: block;
+        font-family: var(--mono);
+        font-size: 8px;
+        letter-spacing: 0.4em;
+        color: rgba(255, 255, 255, 0.65);
+        margin-top: 3px;
+      }
+      .nav-links {
+        display: flex;
+        gap: 28px;
+        justify-content: center;
+        flex: 1;
+      }
+      .nav-links a {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 14.5px;
+        font-weight: 600;
+        text-decoration: none;
+        padding: 24px 2px;
+        border-bottom: 3px solid transparent;
+        transition: all 0.2s;
+        white-space: nowrap;
+      }
+      .nav-links a:hover {
+        color: #fff;
+        border-color: #6d9bff;
+      }
+      .nav-right {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        flex: none;
+      }
+      .clock {
+        color: rgba(255, 255, 255, 0.75);
+        font-family: var(--mono);
+        font-size: 10px;
+        text-align: right;
+        line-height: 1.7;
+        letter-spacing: 0.08em;
+        white-space: nowrap;
+      }
+      .clock b {
+        display: block;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+      }
+
+      /* ══════════ HERO ══════════ */
+      .hero {
+        background:
+          radial-gradient(
+            800px 320px at 80% -60px,
+            rgba(29, 95, 208, 0.09),
+            transparent 60%
+          ),
+          #fff;
+        border-bottom: 1px solid var(--line);
+        text-align: center;
+        padding: clamp(44px, 6vw, 74px) 0 clamp(40px, 5vw, 60px);
+      }
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: #eef3fc;
+        color: var(--navy);
+        font-family: var(--mono);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        padding: 9px 16px;
+        border-radius: 999px;
+        margin-bottom: 22px;
+      }
+      .hero-badge .msym {
+        font-size: 15px;
+      }
+      .hero h1 {
+        font-size: clamp(32px, 4.8vw, 52px);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+        margin: 0;
+        line-height: 1.12;
+      }
+      .hero h1 span {
+        color: var(--blue);
+      }
+      .hero-p {
+        color: var(--mut);
+        max-width: 560px;
+        margin: 16px auto 0;
+        font-size: 15px;
+        line-height: 1.7;
+      }
+      .hero-p b {
+        color: var(--ink);
+      }
+      .greet {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        color: var(--blue);
+        margin-top: 16px;
+        font-weight: 500;
+      }
+
+      /* Buscador cápsula */
+      .search {
+        margin: 28px auto 0;
+        max-width: 640px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: #fff;
+        border: 1.5px solid var(--line2);
+        border-radius: 999px;
+        padding: 6px 12px 6px 22px;
+        height: 62px;
+        box-shadow: 0 12px 32px rgba(13, 43, 107, 0.09);
+        transition: all 0.2s;
+      }
+      .search:focus-within {
+        border-color: var(--blue);
+        box-shadow: 0 12px 36px rgba(29, 95, 208, 0.18);
+      }
+      .search > .msym {
+        color: var(--dim);
+        font-size: 24px;
+      }
+      .search input {
+        flex: 1;
+        min-width: 0;
+        background: transparent;
+        border: 0;
+        outline: 0;
+        color: var(--ink);
+        font-family: inherit;
+        font-size: 15.5px;
+        height: 100%;
+      }
+      .search input::placeholder {
+        color: var(--dim);
+      }
+      .scount {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 0.08em;
+        color: var(--dim);
+        white-space: nowrap;
+      }
+      .sclear {
+        background: #eef3fc;
+        border: 0;
+        color: var(--mut);
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: none;
+        place-items: center;
+        flex: none;
+        transition: all 0.2s;
+      }
+      .sclear:hover {
+        background: var(--navy);
+        color: #fff;
+      }
+      .sclear .msym {
+        font-size: 19px;
+      }
+      .search-hint {
+        margin-top: 14px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        color: var(--dim);
+      }
+      .search-hint kbd {
+        border: 1px solid var(--line2);
+        background: #fff;
+        padding: 2px 8px;
+        border-radius: 6px;
+        color: var(--mut);
+      }
+
+      .stats {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 24px;
+      }
+      .stat-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 8px 16px;
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 0.1em;
+        color: var(--mut);
+        box-shadow: 0 3px 10px rgba(13, 43, 107, 0.05);
+      }
+      .stat-chip b {
+        color: var(--navy);
+      }
+      .stat-chip .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      /* ══════════ SECCIONES ══════════ */
+      section {
+        padding: clamp(44px, 5.5vw, 70px) 0 0;
+      }
+      .sec-head {
+        text-align: center;
+        margin-bottom: 34px;
+      }
+      .overline {
+        font-family: var(--mono);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.3em;
+        color: var(--blue);
+        display: block;
+        margin-bottom: 10px;
+      }
+      .sec-head h2 {
+        font-size: clamp(26px, 3.4vw, 34px);
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        color: var(--navy);
+        margin: 0;
+      }
+      .sec-head p {
+        color: var(--mut);
+        font-size: 14.5px;
+        margin: 8px 0 0;
+      }
+
+      /* ══════════ CARRUSEL DE FRECUENTES ══════════ */
+      .car-wrap {
+        position: relative;
+      }
+      .car-track {
+        display: flex;
+        gap: 20px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding: 6px 4px 22px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .car-track::-webkit-scrollbar {
+        display: none;
+      }
+      .fav-card {
+        scroll-snap-align: start;
+        flex: 0 0 calc((100% - 40px) / 3);
+        border-radius: 22px;
+        padding: 26px;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+        min-height: 290px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 14px 34px rgba(10, 25, 60, 0.2);
+        transition:
+          transform 0.25s,
+          box-shadow 0.25s;
+        cursor: pointer;
+        border: 0;
+        text-align: left;
+        font-family: inherit;
+      }
+      .fav-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 22px 48px rgba(10, 25, 60, 0.3);
+      }
+      .fav-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(
+          -45deg,
+          rgba(255, 255, 255, 0.05) 0 12px,
+          transparent 12px 26px
+        );
+        pointer-events: none;
+      }
+      .fav-card::after {
+        content: "";
+        position: absolute;
+        right: -60px;
+        top: -60px;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.06);
+        pointer-events: none;
+      }
+      .fc-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        position: relative;
+        z-index: 1;
+      }
+      .fc-ic {
+        width: 54px;
+        height: 54px;
+        border-radius: 17px;
+        background: rgba(255, 255, 255, 0.16);
+        display: grid;
+        place-items: center;
+        backdrop-filter: blur(3px);
+      }
+      .fc-ic .msym {
+        font-size: 29px;
+        color: #fff;
+      }
+      .fc-st {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 999px;
+        padding: 6px 13px;
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.12em;
+        color: #fff;
+      }
+      .fc-st .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #4ade80;
+      }
+      .fc-name {
+        position: relative;
+        z-index: 1;
+        font-size: 23px;
+        font-weight: 800;
+        line-height: 1.15;
+        margin-top: auto;
+        letter-spacing: -0.01em;
+      }
+      .fc-desc {
+        position: relative;
+        z-index: 1;
+        font-size: 12.5px;
+        color: rgba(255, 255, 255, 0.85);
+        margin: 7px 0 12px;
+        line-height: 1.55;
+      }
+      .fc-meta {
+        position: relative;
+        z-index: 1;
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.16em;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 16px;
+      }
+      .fc-actions {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .fc-actions .go {
+        margin-left: auto;
+      }
+      /* Degradados disponibles para las tarjetas */
+      .g-navy {
+        background: linear-gradient(
+          155deg,
+          #0a2158 0%,
+          #0d2b6b 45%,
+          #1c4fb8 100%
+        );
+      }
+      .g-blue {
+        background: linear-gradient(
+          155deg,
+          #0b2a6e 0%,
+          #1450b4 55%,
+          #2f86dd 100%
+        );
+      }
+      .g-teal {
+        background: linear-gradient(
+          155deg,
+          #0d2b6b 0%,
+          #0e5aa7 50%,
+          #14a08a 100%
+        );
+      }
+      .g-indigo {
+        background: linear-gradient(
+          155deg,
+          #131f63 0%,
+          #31379f 55%,
+          #5a54cf 100%
+        );
+      }
+      .g-cyan {
+        background: linear-gradient(
+          155deg,
+          #0c2566 0%,
+          #0f6fb8 55%,
+          #25b1d6 100%
+        );
+      }
+      .g-green {
+        background: linear-gradient(
+          155deg,
+          #0d2b6b 0%,
+          #116e63 55%,
+          #1fa476 100%
+        );
+      }
+      .g-deep {
+        background: linear-gradient(
+          155deg,
+          #081b46 0%,
+          #0d2f7d 55%,
+          #2258c4 100%
+        );
+      }
+
+      .car-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        background: #fff;
+        border: 1px solid var(--line);
+        box-shadow: 0 8px 22px rgba(13, 43, 107, 0.18);
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        color: var(--navy);
+        z-index: 2;
+        transition: all 0.2s;
+      }
+      .car-btn .msym {
+        font-size: 24px;
+      }
+      .car-btn:hover {
+        background: var(--navy);
+        color: #fff;
+        border-color: var(--navy);
+      }
+      .car-btn[disabled] {
+        opacity: 0.35;
+        pointer-events: none;
+      }
+      .car-prev {
+        left: -10px;
+      }
+      .car-next {
+        right: -10px;
+      }
+      .dots {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin-top: 4px;
+      }
+      .dot-c {
+        width: 8px;
+        height: 8px;
+        border-radius: 99px;
+        background: #c9d5ec;
+        border: 0;
+        cursor: pointer;
+        transition: all 0.25s;
+        padding: 0;
+      }
+      .dot-c.on {
+        width: 26px;
+        background: var(--navy);
+      }
+
+      /* ══════════ FILTROS ══════════ */
+      .filters {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 28px;
+      }
+      .chip {
+        padding: 9px 18px;
+        border-radius: 999px;
+        border: 1.5px solid var(--line2);
+        background: #fff;
+        font-size: 12.5px;
+        font-weight: 700;
+        color: var(--mut);
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: inherit;
+      }
+      .chip:hover {
+        border-color: var(--navy);
+        color: var(--navy);
+      }
+      .chip.on {
+        background: var(--navy);
+        border-color: var(--navy);
+        color: #fff;
+        box-shadow: 0 6px 16px rgba(13, 43, 107, 0.25);
+      }
+      .chip .n {
+        opacity: 0.55;
+        margin-left: 6px;
+        font-family: var(--mono);
+        font-size: 10.5px;
+      }
+
+      /* ══════════ GRID DE TARJETAS ══════════ */
+      .grid-apps {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+      }
+      .app-card {
+        background: var(--card);
+        border: 1.5px solid var(--line);
+        border-radius: 20px;
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 11px;
+        box-shadow: 0 4px 16px rgba(13, 43, 107, 0.05);
+        transition: all 0.25s;
+        position: relative;
+        animation: cardIn 0.45s both;
+        animation-delay: calc(var(--d) * 0.05s);
+      }
+      @keyframes cardIn {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .app-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 18px 40px rgba(13, 43, 107, 0.13);
+        border-color: #b9cdf2;
+      }
+      .ac-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      .ac-ic {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        display: grid;
+        place-items: center;
+      }
+      .ac-ic .msym {
+        font-size: 27px;
+      }
+      .stat {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 6px 13px;
+        border-radius: 999px;
+      }
+      .stat .dot {
+        width: 6.5px;
+        height: 6.5px;
+        border-radius: 50%;
+      }
+      .stat.ok {
+        background: var(--okbg);
+        color: var(--ok);
+      }
+      .stat.ok .dot {
+        background: var(--ok);
+      }
+      .stat.warn {
+        background: var(--warnbg);
+        color: var(--warn);
+      }
+      .stat.warn .dot {
+        background: var(--warn);
+      }
+      .ac-name {
+        font-size: 16.5px;
+        font-weight: 800;
+        color: var(--ink);
+        letter-spacing: -0.01em;
+      }
+      .ac-desc {
+        font-size: 13px;
+        color: var(--mut);
+        line-height: 1.6;
+        margin: 0;
+        flex: 1;
+      }
+      .ac-meta {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.16em;
+        color: var(--dim);
+      }
+      .ac-foot {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 2px;
+      }
+      .icon-btn {
+        background: #fff;
+        border: 1.5px solid var(--line2);
+        color: var(--mut);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        flex: none;
+      }
+      .icon-btn .msym {
+        font-size: 18px;
+      }
+      .icon-btn:hover {
+        border-color: var(--navy);
+        color: var(--navy);
+        background: #eef3fc;
+      }
+      .ac-foot .pill {
+        margin-left: auto;
+        padding: 10px 19px;
+        font-size: 12.5px;
+      }
+
+      .res-count {
+        text-align: center;
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 0.14em;
+        color: var(--dim);
+        margin-top: 22px;
+      }
+      .res-count b {
+        color: var(--blue);
+      }
+
+      .empty {
+        background: #fff;
+        border: 1.5px dashed var(--line2);
+        border-radius: 20px;
+        padding: 54px 24px;
+        text-align: center;
+        color: var(--mut);
+      }
+      .empty .msym {
+        font-size: 44px;
+        color: var(--dim);
+        display: block;
+        margin: 0 auto 14px;
+      }
+      .empty b {
+        font-family: var(--mono);
+        letter-spacing: 0.2em;
+        font-size: 11px;
+        color: var(--ink);
+      }
+      .empty p {
+        font-size: 13.5px;
+        margin: 8px 0 20px;
+      }
+      .empty .q {
+        color: var(--blue);
+        font-family: var(--mono);
+      }
+
+      /* ══════════ COLORES DE ICONOS POR ÁREA ══════════ */
+      .t-CAL {
+        background: #e6f6ec;
+        color: #178a52;
+      }
+      .t-GES {
+        background: #e7f0fe;
+        color: #1450b4;
+      }
+      .t-RH {
+        background: #ecebfb;
+        color: #4a48b8;
+      }
+      .t-CORR {
+        background: #e9effc;
+        color: #0d2b6b;
+      }
+      .t-WEB {
+        background: #e6f4fb;
+        color: #0f7fbd;
+      }
+      .t-GEN {
+        background: #eceffc;
+        color: #12267a;
+      }
+
+      /* ══════════ FOOTER ══════════ */
+      footer {
+        background: var(--navy);
+        color: #fff;
+        margin-top: 64px;
+      }
+      .foot-grid {
+        display: grid;
+        grid-template-columns: 1.3fr 1fr 1.2fr;
+        gap: 44px;
+        padding: 54px 0 44px;
+      }
+      .foot-grid h4 {
+        font-size: 15px;
+        font-weight: 800;
+        margin: 0 0 16px;
+        color: #fff;
+      }
+      .foot-grid p,
+      .foot-grid li {
+        color: rgba(255, 255, 255, 0.72);
+        font-size: 13.5px;
+        line-height: 1.75;
+      }
+      .foot-grid ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .foot-grid li b {
+        color: #fff;
+        font-weight: 700;
+      }
+      .foot-grid a {
+        color: #9cc3ff;
+        text-decoration: none;
+      }
+      .foot-grid a:hover {
+        text-decoration: underline;
+      }
+      .foot-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+      .foot-brand span {
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: 0.03em;
+      }
+      .foot-bottom {
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        padding: 18px 0;
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        color: rgba(255, 255, 255, 0.55);
+      }
+
+      /* ══════════ BOTONES FLOTANTES ══════════ */
+      .fab {
+        position: fixed;
+        z-index: 80;
+        border: 0;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        transition: all 0.25s;
+        box-shadow: 0 10px 26px rgba(0, 0, 0, 0.25);
+      }
+      .fab-wa {
+        right: 22px;
+        bottom: 22px;
+        width: 58px;
+        height: 58px;
+        background: #25d366;
+        color: #fff;
+      }
+      .fab-wa:hover {
+        transform: scale(1.08);
+      }
+      .fab-wa svg {
+        width: 30px;
+        height: 30px;
+        fill: #fff;
+      }
+      .fab-top {
+        left: 22px;
+        bottom: 22px;
+        width: 48px;
+        height: 48px;
+        background: var(--navy);
+        color: #fff;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(10px);
+      }
+      .fab-top.on {
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+      }
+      .fab-top:hover {
+        background: var(--navy-3);
+      }
+
+      /* ══════════ MODAL DE CONEXIÓN ══════════ */
+      .modal-back {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        background: rgba(8, 18, 45, 0.55);
+        backdrop-filter: blur(5px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        opacity: 0;
+        visibility: hidden;
+        transition:
+          opacity 0.25s,
+          visibility 0.25s;
+      }
+      .modal-back.on {
+        opacity: 1;
+        visibility: visible;
+      }
+      .modal-box {
+        width: 100%;
+        max-width: 470px;
+        background: #fff;
+        border-radius: 22px;
+        overflow: hidden;
+        box-shadow: 0 30px 80px rgba(8, 20, 50, 0.4);
+        transform: translateY(16px) scale(0.97);
+        transition: transform 0.25s;
+      }
+      .modal-back.on .modal-box {
+        transform: none;
+      }
+      .m-head {
+        background: linear-gradient(135deg, var(--navy), #1c4fb8);
+        color: #fff;
+        padding: 18px 22px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .m-head .t {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        font-weight: 700;
+        font-size: 14px;
+      }
+      .m-head .t .msym {
+        font-size: 19px;
+      }
+      .m-x {
+        background: rgba(255, 255, 255, 0.18);
+        border: 0;
+        color: #fff;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        transition: background 0.2s;
+      }
+      .m-x:hover {
+        background: rgba(255, 255, 255, 0.32);
+      }
+      .m-x .msym {
+        font-size: 19px;
+      }
+      .m-body {
+        padding: 24px;
+      }
+      .m-target {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+      .m-target .ac-ic {
+        width: 56px;
+        height: 56px;
+        border-radius: 18px;
+      }
+      .m-target .ac-ic .msym {
+        font-size: 29px;
+      }
+      .m-target b {
+        display: block;
+        font-size: 21px;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        line-height: 1.15;
+      }
+      .m-target small {
+        display: block;
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.16em;
+        color: var(--dim);
+        margin-top: 5px;
+      }
+      .m-row {
+        display: flex;
+        gap: 14px;
+        padding: 12px 0;
+        border-top: 1px dashed var(--line2);
+        font-size: 13px;
+      }
+      .m-row .k {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.16em;
+        color: var(--dim);
+        width: 82px;
+        flex: none;
+        padding-top: 3px;
+      }
+      .m-row .v {
+        color: var(--ink);
+        font-family: var(--mono);
+        font-size: 11.5px;
+        word-break: break-all;
+        font-weight: 500;
+      }
+      .m-row .v.note {
+        color: var(--mut);
+        font-family: "Plus Jakarta Sans";
+        font-size: 12.5px;
+        line-height: 1.6;
+      }
+      .m-foot {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        padding: 0 24px 24px;
+      }
+
+      /* ══════════ OVERLAY DE REDIRECCIÓN ══════════ */
+      .ov {
+        position: fixed;
+        inset: 0;
+        z-index: 110;
+        background: linear-gradient(160deg, #0a2158, #0d2b6b 45%, #16388f);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition:
+          opacity 0.3s,
+          visibility 0.3s;
+      }
+      .ov.on {
+        opacity: 1;
+        visibility: visible;
+      }
+      .ov-in {
+        width: 100%;
+        max-width: 520px;
+        padding: 24px;
+        color: #fff;
+      }
+      .ov-k {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.28em;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 14px;
+      }
+      .ov-host {
+        font-size: clamp(28px, 5vw, 42px);
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        line-height: 1.1;
+        word-break: break-all;
+      }
+      .ov-bar {
+        height: 12px;
+        border-radius: 99px;
+        background: rgba(255, 255, 255, 0.16);
+        margin: 28px 0 22px;
+        overflow: hidden;
+      }
+      .ov-bar i {
+        display: block;
+        height: 100%;
+        width: 0;
+        border-radius: 99px;
+        background: linear-gradient(90deg, #7fb2ff, #fff);
+        transition: width 0.45s ease;
+      }
+      .ov-steps {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        color: rgba(255, 255, 255, 0.92);
+      }
+      .ov-steps li {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 8px 0;
+        opacity: 0;
+        transform: translateX(-8px);
+        animation: stepIn 0.3s forwards;
+      }
+      @keyframes stepIn {
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .ov-steps .msym {
+        font-size: 16px;
+        color: #7ef0c0;
+      }
+      .ov-cancel {
+        margin-top: 28px;
+      }
+
+      /* ══════════ TOASTS MATERIALIZE ══════════ */
+      .tub-toast {
+        background: #fff !important;
+        color: var(--ink) !important;
+        border: 1px solid var(--line);
+        border-left: 4px solid var(--navy);
+        font-family: var(--mono);
+        font-size: 11.5px;
+        letter-spacing: 0.04em;
+        border-radius: 12px;
+        box-shadow: 0 14px 40px rgba(8, 20, 50, 0.3);
+        font-weight: 400;
+      }
+      .tub-toast.warn {
+        border-left-color: #d97706;
+      }
+      .tub-toast.ok {
+        border-left-color: #16a34a;
+      }
+
+      /* ══════════ RESPONSIVE ══════════ */
+      @media (max-width: 991px) {
+        .nav-links {
+          display: none;
+        }
+        .fav-card {
+          flex-basis: calc((100% - 20px) / 2);
+        }
+        .foot-grid {
+          grid-template-columns: 1fr;
+          gap: 32px;
+        }
+      }
+      @media (max-width: 640px) {
+        .fav-card {
+          flex-basis: 86%;
+        }
+        .car-btn {
+          display: none;
+        }
+        .clock {
+          display: none;
+        }
+        .search {
+          height: 56px;
+        }
+        .scount {
+          display: none;
+        }
+        .grid-apps {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation: none !important;
+          transition: none !important;
+        }
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body id="top">
+    <!-- ═══════════ CABECERA ═══════════ -->
+    <header class="tb-nav">
+      <div class="wrap nav-in">
+        <a href="#top" class="brand" aria-label="Intranet Tubrica · inicio">
+          <svg viewBox="0 0 40 40" width="38" height="38" aria-hidden="true">
+            <circle
+              cx="20"
+              cy="20"
+              r="15"
+              fill="none"
+              stroke="#fff"
+              stroke-width="5"
+            />
+            <circle
+              cx="20"
+              cy="20"
+              r="6.5"
+              fill="none"
+              stroke="#fff"
+              stroke-width="5"
+            />
+          </svg>
+          <span>
+            <span class="brand-name">TUBRICA</span>
+            <span class="brand-sub">INTRANET</span>
+          </span>
+        </a>
+
+        <nav class="nav-links" aria-label="Navegación principal">
+          <a href="#top">Inicio</a>
+          <a href="#frecuentes">Frecuentes</a>
+          <a href="#todas">Aplicaciones</a>
+          <a href="#soporte">Soporte</a>
+        </nav>
+
+        <div class="nav-right">
+          <div class="clock d-none d-md-block">
+            <span id="hdrDate">— — —</span>
+            <b id="hdrClock">--:--:--</b>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ═══════════ HERO ═══════════ -->
+    <div class="hero">
+      <div class="wrap">
+        <span class="hero-badge"
+          ><span class="msym">shield_lock</span>USO EXCLUSIVO INTERNO · ACCESO
+          MONITOREADO</span
+        >
+        <h1>Intranet <span>Tubrica</span></h1>
+        <p class="hero-p">
+          Bienvenido a la <b>Intranet de Tuberías Industriales, C.A.</b> — el
+          punto único de acceso a las aplicaciones, sistemas y recursos internos
+          de la empresa.
+        </p>
+        <div class="greet" id="greet">—</div>
+
+        <div class="search">
+          <span class="msym">search</span>
+          <input
+            type="text"
+            id="q"
+            placeholder="Buscar aplicación, código o área…"
+            autocomplete="off"
+            aria-label="Buscar aplicación"
+          />
+          <span class="scount" id="heroCount">—</span>
+          <button class="sclear" id="qClear" aria-label="Limpiar búsqueda">
+            <span class="msym">close</span>
+          </button>
+        </div>
+        <div class="search-hint">
+          PULSE <kbd>/</kbd> PARA BUSCAR &nbsp;·&nbsp; <kbd>ESC</kbd> PARA
+          LIMPIAR
+        </div>
+
+        <div class="stats" id="stats"></div>
+      </div>
+    </div>
+
+    <main class="wrap">
+      <!-- ═══════════ ACCESOS FRECUENTES ═══════════ -->
+      <section id="frecuentes">
+        <div class="sec-head">
+          <span class="overline">ACCESO RÁPIDO</span>
+          <h2>Aplicaciones Frecuentes</h2>
+          <p>
+            Los sistemas más utilizados por el equipo, un toque de distancia.
+          </p>
+        </div>
+
+        <div class="car-wrap">
+          <button class="car-btn car-prev" id="carPrev" aria-label="Anterior">
+            <span class="msym">chevron_left</span>
+          </button>
+          <div class="car-track" id="carTrack"></div>
+          <button class="car-btn car-next" id="carNext" aria-label="Siguiente">
+            <span class="msym">chevron_right</span>
+          </button>
+        </div>
+        <div class="dots" id="carDots" aria-label="Posición del carrusel"></div>
+      </section>
+
+      <!-- ═══════════ TODAS LAS APLICACIONES ═══════════ -->
+      <section id="todas">
+        <div class="sec-head">
+          <span class="overline">REGISTRO MAESTRO</span>
+          <h2>Todas las Aplicaciones</h2>
+          <p>
+            Filtra por área o busca por nombre para encontrar cualquier sistema
+            interno.
+          </p>
+        </div>
+
+        <div
+          class="filters"
+          id="filters"
+          role="group"
+          aria-label="Filtrar por área"
+        ></div>
+        <div class="grid-apps" id="appGrid"></div>
+        <div class="res-count" id="resCount"></div>
+      </section>
+    </main>
+
+    <!-- ═══════════ FOOTER ═══════════ -->
+    <footer id="soporte">
+      <div class="wrap">
+        <div class="foot-grid">
+          <div>
+            <div class="foot-brand">
+              <svg
+                viewBox="0 0 40 40"
+                width="32"
+                height="32"
+                aria-hidden="true"
+              >
+                <circle
+                  cx="20"
+                  cy="20"
+                  r="15"
+                  fill="none"
+                  stroke="#fff"
+                  stroke-width="5"
+                />
+                <circle
+                  cx="20"
+                  cy="20"
+                  r="6.5"
+                  fill="none"
+                  stroke="#fff"
+                  stroke-width="5"
+                />
+              </svg>
+              <span>TUBRICA</span>
+            </div>
+            <p>
+              Tuberías Industriales, C.A. — Valencia, Edo. Carabobo,
+              Venezuela.<br />Distribución mayorista de tuberías, válvulas y
+              conexiones para la industria desde hace más de tres décadas.
+            </p>
+          </div>
+          <div>
+            <h4>Soporte Técnico</h4>
+            <ul>
+              <li>Mesa de ayuda TI · <b>Ext. 4100</b></li>
+              <li>
+                <a href="mailto:soporte.interno@tubrica.com"
+                  >soporte.interno@tubrica.com</a
+                >
+              </li>
+              <li>Lun – Vie · <b>8:00 AM – 5:00 PM</b></li>
+              <li>Resolución promedia: <b>4 horas</b></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Aviso de Seguridad</h4>
+            <p>
+              La Intranet Tubrica es de uso exclusivo interno. Toda actividad
+              realizada a través de este portal queda registrada y monitoreada
+              conforme a las políticas de seguridad de la información de la
+              empresa. El acceso no autorizado será sancionado.
+            </p>
+          </div>
+        </div>
+        <div class="foot-bottom">
+          <span>INTRANET TUBRICA · v4.1.0</span>
+          <span>© 2025 TUBRICA, C.A. · TODOS LOS DERECHOS RESERVADOS</span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ═══════════ BOTONES FLOTANTES ═══════════ -->
+    <button class="fab fab-wa" id="fabWa" aria-label="Chat de soporte">
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <path
+          d="M16 3C9.4 3 4 8.4 4 15c0 2.1.6 4.2 1.7 6L4 29l8.2-1.6c1.7.9 3.7 1.4 5.8 1.4h.1c6.6 0 11.9-5.4 11.9-12S22.6 3 16 3zm0 21.9c-1.8 0-3.5-.5-5-1.4l-.4-.2-4.4.9.9-4.3-.3-.4c-1-1.6-1.6-3.4-1.6-5.4C5.2 9.5 10 4.9 16 4.9S26.8 9.6 26.8 15.6 22 24.9 16 24.9zm5.5-7.4c-.3-.2-1.8-.9-2.1-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.2-.7-1.7-1-2.3-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.2-.3-.3-.6-.4z"
+        />
+      </svg>
+    </button>
+    <button class="fab fab-top" id="fabTop" aria-label="Volver arriba">
+      <span class="msym">arrow_upward</span>
+    </button>
+
+    <!-- ═══════════ MODAL DE CONFIRMACIÓN ═══════════ -->
+    <div
+      class="modal-back"
+      id="connModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="mName"
+    >
+      <div class="modal-box">
+        <div class="m-head">
+          <span class="t"><span class="msym">lock</span> Conexión segura</span>
+          <button class="m-x" id="mClose" aria-label="Cerrar">
+            <span class="msym">close</span>
+          </button>
+        </div>
+        <div class="m-body">
+          <div class="m-target">
+            <span class="ac-ic" id="mIconBox"
+              ><span class="msym" id="mIcon">mail</span></span
+            >
+            <div>
+              <b id="mName">—</b>
+              <small id="mCode">—</small>
+            </div>
+          </div>
+          <div class="m-row">
+            <span class="k">DESTINO</span><span class="v" id="mUrl">—</span>
+          </div>
+          <div class="m-row">
+            <span class="k">AVISO</span
+            ><span class="v note"
+              >El acceso a esta aplicación será registrado en la bitácora de
+              seguridad de la Intranet.</span
+            >
+          </div>
+        </div>
+        <div class="m-foot">
+          <button class="pill ghost" id="mCancel">Cancelar</button>
+          <button class="pill solid" id="mGo">
+            <span class="msym">bolt</span>Conectar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ OVERLAY DE REDIRECCIÓN ═══════════ -->
+    <div class="ov" id="ov">
+      <div class="ov-in">
+        <div class="ov-k">ESTABLECIENDO ENLACE SEGURO →</div>
+        <div class="ov-host" id="ovHost">—</div>
+        <div class="ov-bar"><i id="ovBar"></i></div>
+        <ul class="ov-steps" id="ovSteps"></ul>
+        <div class="ov-cancel">
+          <button class="pill glass" id="ovCancel">Cancelar · ESC</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts de frameworks -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <script>
+      /* ═════════════════════════════════════════════════════════════════════
+   CONFIGURACIÓN DE LA INTRANET · AQUÍ SE AGREGAN LAS TARJETAS
+   ═════════════════════════════════════════════════════════════════════
+
+   ▶ PARA AGREGAR UNA NUEVA APLICACIÓN:
+     1. Copia un bloque { ... } de la lista APPS de abajo.
+     2. Pégalo al final de la lista (antes del corchete de cierre ]).
+     3. Cambia: code, name, desc, cat, icon, url y fav. Listo.
+        Aparece sola en la grilla, en el buscador, en los filtros
+        y en las estadísticas. No hay que tocar nada más.
+
+   ▶ CAMPOS DE CADA APLICACIÓN:
+     code  : código corto que se muestra en la tarjeta (ej: 'FIN-03')
+     name  : nombre visible de la aplicación
+     desc  : descripción de una línea
+     cat   : clave del área (debe existir en CATS, o usa 'GEN')
+     icon  : nombre de ícono Material Symbols → fonts.google.com/icons
+     url   : enlace real de la aplicación (http://192.168.1.50/app, etc.)
+     status: 'ok' = operativa · 'warn' = en mantenimiento (bloquea el acceso)
+     fav   : true = aparece en el carrusel de "Aplicaciones Frecuentes"
+     last  : texto informativo del último acceso
+
+   ▶ PARA UN ÁREA NUEVA (categoría): agrega una línea en CATS con
+     su degradado (g-...) y color de icono (t-...). Si no la agregas,
+     la app funciona igual usando el estilo GENÉRICO de respaldo.
+   ═════════════════════════════════════════════════════════════════════ */
+
+      // ── Áreas y sus colores ────────────────────────────────────────
+      // g-… = degradado de tarjeta destacada · t-… = color de icono en tarjeta blanca
+      const CATS = {
+        CAL: { label: "CALIDAD", g: "g-green", t: "t-CAL" },
+        GES: { label: "GESTIÓN", g: "g-blue", t: "t-GES" },
+        RH: { label: "TALENTO HUMANO", g: "g-indigo", t: "t-RH" },
+        CORR: { label: "CORRESPONDENCIA", g: "g-navy", t: "t-CORR" },
+        WEB: { label: "SITIO WEB", g: "g-cyan", t: "t-WEB" },
+        GEN: { label: "GENERAL", g: "g-deep", t: "t-GEN" }, // respaldo
+      };
+
+      // ── Aplicaciones de la Intranet ────────────────────────────────
+      const APPS = [
+        {
+          code: "CAL-01",
+          name: "ISO Document",
+          desc: "Documentación del Sistema de Gestión de Calidad ISO 9001:2015.",
+          cat: "CAL",
+          icon: "folder_shared",
+          url: "https://isodocument.tubrica.com",
+          status: "ok",
+          fav: true,
+          last: "HOY · 08:15 AM",
+        },
+        {
+          code: "GES-01",
+          name: "Gesting",
+          desc: "Sistema de gestión administrativa: procesos, seguimiento y reportes.",
+          cat: "GES",
+          icon: "analytics",
+          url: "https://gesting.tubrica.com",
+          status: "ok",
+          fav: true,
+          last: "HOY · 09:02 AM",
+        },
+        {
+          code: "RH-01",
+          name: "Vacaciones",
+          desc: "Solicitud y aprobación de vacaciones, permisos y días disponibles.",
+          cat: "RH",
+          icon: "beach_access",
+          url: "https://vacaciones.tubrica.com",
+          status: "ok",
+          fav: true,
+          last: "AYER · 03:40 PM",
+        },
+        {
+          code: "COR-01",
+          name: "Correo Corporativo",
+          desc: "Buzones institucionales y correspondencia oficial (Outlook Web).",
+          cat: "CORR",
+          icon: "mail",
+          url: "https://correo.tubrica.com",
+          status: "ok",
+          fav: true,
+          last: "HOY · 08:05 AM",
+        },
+        {
+          code: "WEB-01",
+          name: "tubrica.com",
+          desc: "Sitio web público de la empresa: catálogo, noticias y contacto.",
+          cat: "WEB",
+          icon: "public",
+          url: "https://tubrica.com",
+          status: "ok",
+          fav: true,
+          last: "AYER · 05:12 PM",
+        },
+        /* ← Pega aquí la siguiente aplicación, ejemplo:
+  ,
+  {
+    code: 'TI-01',
+    name: 'Mesa de Ayuda',
+    desc: 'Soporte técnico interno: tickets y requerimientos.',
+    cat: 'GEN',
+    icon: 'support_agent',
+    url: 'https://soporte.tubrica.com',
+    status: 'ok',
+    fav: false,
+    last: '—'
+  }
+  */
+      ];
+
+      APPS.forEach((a, i) => (a.id = i));
+
+      const state = { q: "", cat: "ALL" };
+      let connTimers = [];
+
+      // ── Utilidades ─────────────────────────────────────────────────
+      const esc = (s) => $("<i>").text(s).html();
+      const escReg = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const hl = (t, q) =>
+        !q
+          ? esc(t)
+          : esc(t).replace(
+              new RegExp("(" + escReg(esc(q)) + ")", "gi"),
+              "<mark>$1</mark>",
+            );
+      const toast = (html, cls = "") =>
+        M.toast({ html, classes: "tub-toast " + cls });
+      const cat = (a) => CATS[a.cat] || CATS.GEN; // si el área no existe, usa GEN
+      const stChip = (a) =>
+        a.status === "ok"
+          ? '<span class="stat ok"><i class="dot"></i>Operativa</span>'
+          : '<span class="stat warn"><i class="dot"></i>Mantenimiento</span>';
+
+      // ── Carrusel de frecuentes (usa el campo fav) ──────────────────
+      function renderFavs() {
+        const favs = APPS.filter((a) => a.fav);
+        $("#carTrack").html(
+          favs
+            .map(
+              (a) => `
+    <button class="fav-card ${cat(a).g} js-connect" data-idx="${a.id}" aria-label="Conectar a ${esc(a.name)}">
+      <div class="fc-top">
+        <span class="fc-ic"><span class="msym">${a.icon}</span></span>
+        <span class="fc-st"><i class="dot"></i>${a.status === "ok" ? "OPERATIVA" : "MANTENIMIENTO"}</span>
+      </div>
+      <div class="fc-name">${hl(a.name, state.q.trim())}</div>
+      <div class="fc-desc">${esc(a.desc)}</div>
+      <div class="fc-meta">${a.code} · ${cat(a).label}</div>
+      <div class="fc-actions">
+        <span class="pill glass js-copy" data-url="${a.url}" role="button" tabindex="-1"><span class="msym">content_copy</span></span>
+        <span class="pill white go">Conectar<span class="msym">arrow_forward</span></span>
+      </div>
+    </button>`,
+            )
+            .join(""),
+        );
+        $("#carDots").html(
+          favs
+            .map(
+              (_, i) =>
+                `<button class="dot-c ${i === 0 ? "on" : ""}" data-i="${i}" aria-label="Ir a tarjeta ${i + 1}"></button>`,
+            )
+            .join(""),
+        );
+        updateCarUI();
+      }
+
+      function carStep() {
+        const c = $("#carTrack .fav-card").first();
+        return c.length ? c.outerWidth() + 20 : 300;
+      }
+      function updateCarUI() {
+        const tr = $("#carTrack")[0];
+        if (!tr) return;
+        const max = tr.scrollWidth - tr.clientWidth - 4;
+        $("#carPrev").prop("disabled", tr.scrollLeft < 10);
+        $("#carNext").prop("disabled", tr.scrollLeft > max);
+        const n = Math.max(1, APPS.filter((a) => a.fav).length);
+        const i = Math.min(n - 1, Math.round(tr.scrollLeft / carStep()));
+        $("#carDots .dot-c").removeClass("on").eq(i).addClass("on");
+      }
+      $("#carTrack").on("scroll", () => requestAnimationFrame(updateCarUI));
+      $("#carPrev").on("click", () =>
+        $("#carTrack")[0].scrollBy({ left: -carStep(), behavior: "smooth" }),
+      );
+      $("#carNext").on("click", () =>
+        $("#carTrack")[0].scrollBy({ left: carStep(), behavior: "smooth" }),
+      );
+      $("#carDots").on("click", ".dot-c", function () {
+        $("#carTrack")[0].scrollTo({
+          left: $(this).data("i") * carStep(),
+          behavior: "smooth",
+        });
+      });
+
+      // ── Estadísticas dinámicas del hero ────────────────────────────
+      function renderStats() {
+        const ok = APPS.filter((a) => a.status === "ok").length;
+        const wn = APPS.length - ok;
+        $("#stats").html(`
+    <span class="stat-chip"><b>${APPS.length}</b> APLICACIONES</span>
+    <span class="stat-chip"><span class="dot" style="background:var(--ok)"></span><b>${ok}</b> OPERATIVAS</span>
+    ${wn ? `<span class="stat-chip"><span class="dot" style="background:#d97706"></span><b>${wn}</b> EN MANTENIMIENTO</span>` : ""}`);
+      }
+
+      // ── Filtros por área (se generan solos según las apps) ─────────
+      function renderFilters() {
+        const counts = {};
+        APPS.forEach((a) => (counts[a.cat] = (counts[a.cat] || 0) + 1));
+        let html = `<button class="chip ${state.cat === "ALL" ? "on" : ""}" data-cat="ALL">Todas<span class="n">${APPS.length}</span></button>`;
+        for (const c in counts) {
+          html += `<button class="chip ${state.cat === c ? "on" : ""}" data-cat="${c}">${c}<span class="n">${counts[c]}</span></button>`;
+        }
+        $("#filters").html(html);
+      }
+
+      // ── Grid de tarjetas ───────────────────────────────────────────
+      function render() {
+        const q = state.q.trim();
+        const ql = q.toLowerCase();
+        const list = APPS.filter((a) => {
+          if (state.cat !== "ALL" && a.cat !== state.cat) return false;
+          if (!ql) return true;
+          return (a.name + " " + a.desc + " " + a.code + " " + cat(a).label)
+            .toLowerCase()
+            .includes(ql);
+        });
+
+        if (!list.length) {
+          $("#appGrid").html(`
+      <div class="empty" style="grid-column:1/-1">
+        <span class="msym">search_off</span>
+        <b>SIN COINCIDENCIAS</b>
+        <p>Ninguna aplicación corresponde a <span class="q">«${esc(q)}»</span></p>
+        <button class="pill solid" id="emptyClear"><span class="msym">close</span>Limpiar búsqueda</button>
+      </div>`);
+        } else {
+          $("#appGrid").html(
+            list
+              .map(
+                (a, i) => `
+      <div class="app-card" style="--d:${i}">
+        <div class="ac-top">
+          <span class="ac-ic ${cat(a).t}"><span class="msym">${a.icon}</span></span>
+          ${stChip(a)}
+        </div>
+        <b class="ac-name">${hl(a.name, q)}</b>
+        <p class="ac-desc">${hl(a.desc, q)}</p>
+        <div class="ac-meta">${hl(a.code, q)} · ${cat(a).label} · ${a.last}</div>
+        <div class="ac-foot">
+          <button class="icon-btn js-copy" data-url="${a.url}" aria-label="Copiar enlace de ${esc(a.name)}"><span class="msym">content_copy</span></button>
+          ${
+            a.status === "ok"
+              ? `<button class="pill solid js-connect" data-idx="${a.id}">Conectar<span class="msym">arrow_forward</span></button>`
+              : `<button class="pill ghost js-blocked" data-idx="${a.id}" style="color:var(--warn);border-color:#f3d9ad"><span class="msym">warning</span>Bloqueada</button>`
+          }
+        </div>
+      </div>`,
+              )
+              .join(""),
+          );
+        }
+
+        $("#resCount").html(
+          "MOSTRANDO <b>" +
+            list.length +
+            "</b> DE " +
+            APPS.length +
+            " APLICACIONES REGISTRADAS",
+        );
+        $("#heroCount").text(list.length + " / " + APPS.length);
+        $("#qClear").css("display", q.length ? "grid" : "none");
+        renderFavs();
+      }
+
+      // ── Reloj, fecha y saludo ──────────────────────────────────────
+      function tick() {
+        const d = new Date();
+        const f = new Intl.DateTimeFormat("es-VE", {
+          weekday: "short",
+          day: "2-digit",
+          month: "short",
+        })
+          .format(d)
+          .toUpperCase();
+        const h = d.toLocaleTimeString("es-VE", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false,
+        });
+        $("#hdrDate").text(f);
+        $("#hdrClock").text(h);
+        const hr = d.getHours();
+        const sal =
+          hr < 12 ? "BUENOS DÍAS" : hr < 19 ? "BUENAS TARDES" : "BUENAS NOCHES";
+        $("#greet").text("◈ " + sal + ", EQUIPO TUBRICA — TURNO EN CURSO");
+      }
+      setInterval(tick, 1000);
+      tick();
+
+      // ── Búsqueda y filtros ─────────────────────────────────────────
+      $("#q").on("input", function () {
+        state.q = this.value;
+        render();
+      });
+      $("#qClear").on("click", function () {
+        state.q = "";
+        $("#q").val("").focus();
+        render();
+      });
+      $("#filters").on("click", ".chip", function () {
+        state.cat = $(this).data("cat");
+        $("#filters .chip").removeClass("on");
+        $(this).addClass("on");
+        render();
+      });
+      $(document).on("keydown", function (e) {
+        const typing = $(e.target).is("input,textarea");
+        if (e.key === "/" && !typing) {
+          e.preventDefault();
+          $("#q").focus();
+        }
+        if (e.key === "Escape") {
+          if ($("#ov").hasClass("on")) return cancelConnection();
+          if ($("#connModal").hasClass("on")) return closeModal();
+          if (typing) {
+            $("#q").val("");
+            state.q = "";
+            render();
+            $("#q").blur();
+          }
+        }
+      });
+      $(document).on("click", "#emptyClear", function () {
+        state.q = "";
+        state.cat = "ALL";
+        renderFilters();
+        render();
+      });
+
+      // ── Copiar enlace al portapapeles ──────────────────────────────
+      $(document).on("click", ".js-copy", function (e) {
+        e.stopPropagation();
+        const url = $(this).data("url");
+        const done = () =>
+          toast(
+            '<span class="msym" style="font-size:14px;vertical-align:-2px">content_copy</span>&nbsp; ENLACE COPIADO · ' +
+              url.replace("https://", ""),
+            "ok",
+          );
+        if (navigator.clipboard) {
+          navigator.clipboard
+            .writeText(url)
+            .then(done)
+            .catch(() => fallbackCopy(url, done));
+        } else fallbackCopy(url, done);
+      });
+      function fallbackCopy(t, cb) {
+        const ta = document.createElement("textarea");
+        ta.value = t;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        cb();
+      }
+
+      // ── Botones flotantes ──────────────────────────────────────────
+      $("#fabWa").on("click", function () {
+        toast(
+          '<span class="msym" style="font-size:14px;vertical-align:-2px">support_agent</span>&nbsp; MESA DE AYUDA TI · EXT. 4100 · soporte.interno@tubrica.com',
+          "ok",
+        );
+      });
+      $(window).on("scroll", function () {
+        $("#fabTop").toggleClass("on", $(this).scrollTop() > 400);
+      });
+      $("#fabTop").on("click", () =>
+        window.scrollTo({ top: 0, behavior: "smooth" }),
+      );
+
+      // ── Modal de confirmación de conexión ──────────────────────────
+      let currentApp = null;
+      function openModal(a) {
+        currentApp = a;
+        $("#mIcon").text(a.icon);
+        $("#mIconBox").attr("class", "ac-ic " + cat(a).t);
+        $("#mName").text(a.name);
+        $("#mCode").text(a.code + " · " + cat(a).label);
+        $("#mUrl").text(a.url);
+        $("#connModal").addClass("on");
+        $("body").css("overflow", "hidden");
+        $("#mGo").focus();
+      }
+      function closeModal() {
+        $("#connModal").removeClass("on");
+        $("body").css("overflow", "");
+      }
+
+      $(document).on("click", ".js-connect", function () {
+        openModal(APPS[$(this).data("idx")]);
+      });
+      $(document).on("click", ".js-blocked", function () {
+        const a = APPS[$(this).data("idx")];
+        toast(
+          '<span class="msym" style="font-size:14px;vertical-align:-2px">warning</span>&nbsp; ' +
+            a.code +
+            " EN MANTENIMIENTO PROGRAMADO",
+          "warn",
+        );
+      });
+      $("#mClose, #mCancel").on("click", closeModal);
+      $("#connModal").on("click", function (e) {
+        if (e.target === this) closeModal();
+      });
+
+      // ── Secuencia de conexión y redirección ────────────────────────
+      $("#mGo").on("click", function () {
+        if (!currentApp) return;
+        const a = currentApp;
+        closeModal();
+        runConnection(a);
+      });
+      $("#ovCancel").on("click", cancelConnection);
+
+      function runConnection(a) {
+        let host = a.url;
+        try {
+          host = new URL(a.url).host;
+        } catch (_) {}
+        $("#ovHost").text(host);
+        $("#ovSteps").empty();
+        $("#ovBar").css("width", "0%");
+        $("#ov").addClass("on");
+        $("body").css("overflow", "hidden");
+
+        const steps = [
+          "VERIFICANDO ENLACE",
+          "ABRIENDO CANAL CIFRADO TLS 1.3",
+          "REDIRIGIENDO A " + host.toUpperCase(),
+        ];
+        connTimers.forEach(clearTimeout);
+        connTimers = [];
+        steps.forEach((s, i) => {
+          connTimers.push(
+            setTimeout(
+              () => {
+                $("#ovSteps").append(
+                  `<li><span class="msym">check_circle</span>${s}</li>`,
+                );
+                $("#ovBar").css("width", ((i + 1) / steps.length) * 100 + "%");
+              },
+              450 + i * 500,
+            ),
+          );
+        });
+        connTimers.push(
+          setTimeout(
+            () => {
+              window.location.href = a.url;
+            },
+            450 + steps.length * 500 + 400,
+          ),
+        );
+      }
+
+      function cancelConnection() {
+        connTimers.forEach(clearTimeout);
+        connTimers = [];
+        $("#ov").removeClass("on");
+        $("body").css("overflow", "");
+        toast("CONEXIÓN CANCELADA", "warn");
+      }
+
+      // ── Inicialización ─────────────────────────────────────────────
+      renderStats();
+      renderFilters();
+      render();
+    </script>
+  </body>
+</html>
